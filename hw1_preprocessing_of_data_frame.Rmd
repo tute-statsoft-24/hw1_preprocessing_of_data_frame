@@ -1,0 +1,151 @@
+---
+title: "统计软件课程设计 - 作业1：数据框预处理"
+author: "学生姓名"
+date: "`r Sys.Date()`"
+output: 
+  html_document:
+    toc: true
+    code_folding: show
+    df_print: paged
+---
+
+<style>
+body { font-size: 18px; }
+</style>
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = FALSE, message = FALSE)
+```
+
+### 任务说明
+请根据以下步骤完成数据处理，并确保最终结果变量命名与要求一致，以便自动批改系统正确识别。
+
+**重要**：所有输出变量名必须严格匹配（如`week_mean`），否则无法得分。
+
+<br>
+
+### 步骤 1：读取数据
+从`data/NIPT.csv`读取数据（注意编码为GBK）查看数据结构以了解字段
+
+```{r read-data}
+# TODO: 读取 NIPT.csv 文件
+df_NIPT <- NULL
+
+# TODO: 查看数据结构（例如使用 str()）
+
+```
+
+<br>
+
+### 步骤 2：数据类型转换
+请完成以下转换：
+
+- 将 `胎儿是否健康` 转为有序因子（"是" < "否"）
+
+- 将 `怀孕次数` 转为有序因子（"1" < "2" < "≥3"）
+
+- 将 `IVF妊娠` 转为因子
+
+- 从 `染色体的非整倍体` 列创建 T13/T18/T21 逻辑列
+
+- 将 `末次月经` 和 `检测日期` 转为 Date 类型
+
+- 将 `检测孕周`（如 `"11w+6"`）转为数值型 `检测孕周2`
+
+```{r transform-data}
+# TODO: 转换胎儿是否健康为有序因子
+df_NIPT$胎儿是否健康 <- NULL
+
+# TODO: 转换怀孕次数为有序因子
+df_NIPT$怀孕次数 <- NULL
+
+# TODO: 转换IVF妊娠为因子
+df_NIPT$IVF妊娠 <- NULL
+
+# TODO: 创建T13/T18/T21逻辑列
+# 提示：可使用 grepl("T13", ...) 检查字符串是否包含特定模式
+df_NIPT$T13 <- NULL
+df_NIPT$T18 <- NULL
+df_NIPT$T21 <- NULL
+df_NIPT$T131821 <- NULL
+
+# TODO: 转换末次月经为Date（注意可能有多种格式，如"2023/5/2" 或 "2023-05-02"）
+df_NIPT$末次月经 <- NULL
+
+# TODO: 转换检测日期为Date（格式为 YYYYMMDD，如20230502）
+df_NIPT$检测日期 <- NULL
+
+# TODO: 定义函数将 "Xw+Y" 或 "Xw" 转为数值孕周（如 "11w+6" → 11.857）
+# 提示：可使用正则表达式 regexec() + regmatches()
+week_converter <- function(input_str) {
+  # 在此处实现转换逻辑
+}
+
+df_NIPT$检测孕周2 <- sapply(df_NIPT$检测孕周, week_converter)
+```
+
+<br>
+
+### 步骤 3：按 BMI 分组并计算统计量
+
+要求：
+
+- 创建 `BMI_group` 列，分组为：`[20, 28)`, `[28, 32)`, `[32, 36)`, `[36, 40)`, `40+`
+
+- 筛选 `Y染色体浓度 > 0.04` 的记录
+
+- 计算各BMI分组孕妇Y染色体浓度超过4%的首次检测时间的均值、标准差、5% 分位数、95% 分位数
+
+```{r analyze-BMI-groups}
+# TODO: 创建 BMI_group 列
+# 提示：可使用条件赋值或 ifelse
+df_NIPT$BMI_group <- NULL
+
+# TODO: 筛选 Y染色体浓度 > 4% 的记录
+df_NIPT_qualified <- NULL
+
+# TODO: 按 孕妇代码 和 检测孕周2 升序排序
+df_NIPT_qualified <- NULL
+
+# 以下变量名和顺序必须严格保持，供自动批改系统检查
+week_mean <- rep(NA, 5)
+week_sd <- rep(NA, 5)
+week_percentile_5 <- rep(NA, 5)
+week_percentile_95 <- rep(NA, 5)
+BMI_group_labels <- c("[20, 28)", "[28, 32)", "[32, 36)", "[36, 40)", "40+")
+
+# TODO: 对每个 BMI 组：
+#   找出每位孕妇的检测孕周2的第一个值
+#   计算该组的均值、标准差、5% 和 95% 分位数
+#   存入上述向量的对应位置（[1] = [20,28), [2] = [28,32), ...）
+
+```
+
+<br>
+
+### 步骤 4：保存结果
+
+```{r save-result}
+# TODO: 将处理后的数据框保存为CSV文件
+# 文件路径：data/NIPT_after_prep.csv
+# 编码：GBK
+
+```
+
+<br>
+
+### 结果汇总（请保留此部分用于审核）
+
+```{r check-output, echo=FALSE}
+# 构建结果数据框
+results <- data.frame(
+  BMI_Group = BMI_group_labels,
+  Mean_Week = week_mean,
+  SD_Week = week_sd,
+  P5_Week = week_percentile_5,
+  P95_Week = week_percentile_95
+)
+
+# 渲染表格（隐藏代码，只显示结果）
+knitr::kable(results, caption = "各BMI组首次检测孕周统计量", digits = 3)
+```
